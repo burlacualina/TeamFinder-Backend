@@ -33,9 +33,9 @@ export class SkillService {
     if (!skill) {
       throw new NotFoundException('Skill not found.');
     }
-    if (skill.users.id !== userId) {
-      throw new UnauthorizedException('You can only update skills you have created.');
-    }
+   // if (skill.users.id !== userId) {
+   //   throw new UnauthorizedException('You can only update skills you have created.');
+   // }
 
     Object.assign(skill, updateData);
     await this.skillRepository.save(skill);
@@ -79,7 +79,7 @@ export class SkillService {
       }
     }
 
-    user.skills = [...user.skills, ...skillsToAdd];
-    await this.userService.update(userId,user);
+   // user.skills = [...user.skills, ...skillsToAdd];
+   // await this.userService.update(userId,user);
   }
 }
