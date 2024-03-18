@@ -33,4 +33,4 @@ jobs:
           appType: 'webAppLinux'
           appName: "atc-2024-x-force-be-linux-web-app"
           package: $(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip
-          startUpCommand: 'npm start:prod'
+          startUpCommand: 'npm run start:prod'
