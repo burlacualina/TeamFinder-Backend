@@ -28,8 +28,8 @@ export class UserController {
    return await this.userService.createEmployee(data);
   }
   @Post('admin')
-  async createAdmanOrg(@Body() data: CreateAdminDto)
-  {return await this.userService.createAdmanOrg(data);}
+  async createOrgAndAdmin(@Body() data: CreateAdminDto)
+  {return await this.userService.createOrgAndAdmin(data);}
 
   
 }

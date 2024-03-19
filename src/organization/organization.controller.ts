@@ -1,33 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { OrganizationService } from './organization.service'; 
-import { Organization } from './organization.entity'; 
+import { Controller, Get, Post, Body} from '@nestjs/common';
+import { RolesGuard} from 'src/authentication/roles.guard';
+import { UserRole } from 'src/users/user.entity';
+import { HasRoles } from 'src/authentication/roles.decorator';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/authentication/jwt.guard';
+import { CreateOrganizationDto } from './organization.dto'; 
+import { OrganizationService } from './organization.service';
 
 @Controller('organizations')
 export class OrganizationController {
-  constructor(private readonly organizationService: OrganizationService) {}
+  constructor(private organizationsService: OrganizationService) {}
 
   @Get()
-  findAll(): Promise<Organization[]> {
-    return this.organizationService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string): Promise<Organization> {
-    return this.organizationService.findOne(+id);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HasRoles(UserRole.ADMIN)
+  findOrganizations() {
+    return this.organizationsService.findOrganizations();
   }
 
   @Post()
-  create(@Body() organization: Partial<Organization>): Promise<Organization> {
-    return this.organizationService.create(organization);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() organization: Partial<Organization>): Promise<Organization> {
-    return this.organizationService.update(+id, organization);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.organizationService.remove(+id);
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @HasRoles(UserRole.ADMIN)
+  createOrganization(@Body() data: CreateOrganizationDto) {
+    return this.organizationsService.createOrganization(data.name, data.address);
   }
 }

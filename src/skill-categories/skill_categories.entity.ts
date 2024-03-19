@@ -9,8 +9,8 @@ export class SkillCategory {
   @Column()
   name: string;
 
-  //@ManyToOne(() => Organization, (organization) => organization.skillCategory)
-  //organization: Organization;
+  @ManyToOne(() => Organization, (organization) => organization.skillCategory)
+  organization: Organization;
 
 
 }

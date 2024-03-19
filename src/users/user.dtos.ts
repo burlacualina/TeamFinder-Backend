@@ -1,15 +1,18 @@
-import {  IsEmail,  IsString, IsNumber,IsEnum } from 'class-validator';
+import {  IsEmail,  IsString, IsNumber,IsEnum ,IsOptional} from 'class-validator';
 import {Project_period} from '../projects/project.entity';
-
+import { UserRole } from './user.entity';
 export class CreateEmployeeDto {
-    @IsString()
-    name: string;
+  @IsString()
+  name: string;
 
-    @IsString()
-    email: string;
+  @IsEmail()
+  email: string;
 
-    @IsString()
-    password:string;
+  @IsString()
+  password: string;
+
+  @IsOptional()
+  organizationId?: number;
 }
 
 export class CreateAdminDto{
@@ -64,5 +67,15 @@ export class CreateAdminDto{
 
     @IsString()
     skill_name:string;
+  }
+  export class FindUserByIdAndRoleDto {
+    @IsNumber()
+    userId: number;
+  
+    @IsString()
+    role: UserRole;
+  
+    @IsNumber()
+    organizationId: number;
   }
   

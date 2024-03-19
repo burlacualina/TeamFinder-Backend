@@ -10,25 +10,19 @@ export class OrganizationService {
     private organizationRepository: Repository<Organization>,
   ) {}
 
-  async findAll(): Promise<Organization[]> {
-    return await this.organizationRepository.find();
+  async createOrganization(name: string, address: string): Promise<Organization> {
+    const newOrganization = await this.organizationRepository.save({
+      address,
+      name,
+    });
+    return newOrganization;
   }
 
-  async findOne(id: number): Promise<Organization> {
-    return await this.organizationRepository.findOne({where : {id
-    }});
+  async findOrganizations() {
+    return await this.organizationRepository.find({ relations: { users: true } });
   }
 
-  async create(organization: Partial<Organization>): Promise<Organization> {
-    return await this.organizationRepository.save(organization);
-  }
-
-  async update(id: number, organization: Partial<Organization>): Promise<Organization> {
-    await this.organizationRepository.update(id, organization);
-    return this.findOne(id);
-  }
-
-  async remove(id: number): Promise<void> {
-    await this.organizationRepository.delete(id);
+  async findOrganizationById(id: number) {
+    return await this.organizationRepository.findOneBy({ id });
   }
 }
