@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SkillCategory } from './skill_categories.entity';
@@ -15,7 +15,7 @@ export class SkillCategoryService {
   }
 
   async findOne(id: number): Promise<SkillCategory | undefined> {
-    return await this.skillCategoryRepository.findOne({ where: { id: id } });
+    return await this.skillCategoryRepository.findOne({ where: { id: id} });
   }
 
   async create(skillCategoryData: Partial<SkillCategory>): Promise<SkillCategory> {
@@ -31,4 +31,12 @@ export class SkillCategoryService {
   async remove(id: number): Promise<void> {
     await this.skillCategoryRepository.delete(id);
   }
+  async findSkillCategoryById(categoryId: number) {
+    const category = await this.skillCategoryRepository.findOneBy({ id: categoryId });
+    if (!category) {
+      throw new NotFoundException('SKill category not found');
+    }
+    return category;
+  }
 }
+

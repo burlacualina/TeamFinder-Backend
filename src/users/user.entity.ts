@@ -1,6 +1,6 @@
-import { Entity ,Column, PrimaryGeneratedColumn,ManyToOne} from "typeorm";
+import { Entity ,Column, PrimaryGeneratedColumn,ManyToOne,ManyToMany,JoinTable,JoinColumn} from "typeorm";
 import { Organization } from '../organization/organization.entity';
-
+import { Skill } from "src/skills/skill.entity";
 export enum UserRole {
     ADMIN = 'admin',
     EMPLOYEE = 'employee',
@@ -28,6 +28,16 @@ export class User{
   })
  role:UserRole;
 
-@ManyToOne(() => Organization, organization => organization.users)
-organization: Organization; 
+ @ManyToOne(() => Organization, (organization) => organization.users)
+ @JoinColumn({ name: 'organization_id' })
+ organization: Organization;
+
+@ManyToMany(() => Skill, (skill) => skill.users)
+  @JoinTable({
+    name: 'user_skills',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'skill_id', referencedColumnName: 'id' },
+  })
+  skills: Skill[];
+
 }

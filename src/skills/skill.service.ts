@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository,In } from 'typeorm';
 import { Skill } from './skill.entity';
 import { UserService } from 'src/users/user.service';
-import { AssignSkillsDto, CreateSkillDto, UpdateSkillDto } from './skills.dtos';
+import { CreateSkillDto, UpdateSkillDto } from './skills.dtos';
+import { SkillCategoryService } from 'src/skill-categories/skill_categories.service';
+import { UserRole } from 'src/users/user.entity';
+import { DeepPartial } from 'typeorm';
+
 
 @Injectable()
 export class SkillService {
@@ -11,6 +15,7 @@ export class SkillService {
     @InjectRepository(Skill)
     private skillRepository: Repository<Skill>,
     private readonly userService: UserService,
+    private skillCategoryService:SkillCategoryService
   ) {}
 
   async findAll(): Promise<Skill[]> {
@@ -18,7 +23,7 @@ export class SkillService {
   }
 
   async findOne(id: number): Promise<Skill> {
-    return await this.skillRepository.findOne({ where: { skill_id: id } });
+    return await this.skillRepository.findOne({ where: { id: id} });
   }
 
   async create(skill: Partial<Skill>): Promise<Skill> {
@@ -27,15 +32,15 @@ export class SkillService {
 
   async update(userId: number, skillId: number, updateData: UpdateSkillDto) {
     const skill = await this.skillRepository.findOne({
-      where: { skill_id: skillId },
+      where: { id: skillId },
       relations: ['author'],
     });
     if (!skill) {
       throw new NotFoundException('Skill not found.');
     }
-   // if (skill.users.id !== userId) {
-   //   throw new UnauthorizedException('You can only update skills you have created.');
-   // }
+    if (skill.users.id !== userId) {
+     throw new UnauthorizedException('You can only update skills you have created.');
+   }
 
     Object.assign(skill, updateData);
     await this.skillRepository.save(skill);
@@ -46,7 +51,6 @@ export class SkillService {
   }
   
   async delete(userId: number, skillId: number): Promise<void> {
-    // Check if the skill exists for the given user
     const skill = await this.skillRepository.findOne({
       where: { id: skillId, userId: userId } as Partial<Skill>, 
   });
@@ -79,7 +83,7 @@ export class SkillService {
       }
     }
 
-   // user.skills = [...user.skills, ...skillsToAdd];
-   // await this.userService.update(userId,user);
+   user.skills = skillsToAdd;
+   await this.userService.update(userId, user); 
   }
 }

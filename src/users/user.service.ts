@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateAdminDto, CreateEmployeeDto } from './user.dtos';
+import { OrganizationService } from 'src/organization/organization.service';
+import { FindUserByIdAndRoleDto } from './user.dtos';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private organizationsService : OrganizationService,
   ) {}
 
   async createUser(name: string, email: string, password: string) {
@@ -16,16 +19,35 @@ export class UserService {
     return user;
   }
 
-  async createEmployee(data: CreateEmployeeDto) 
-  {
-    const employee = await this.createUser(data.name,data.email,data.password);
+  async createEmployee(data: CreateEmployeeDto) {
+    const organization = await this.organizationsService.findOrganizationById(data.organizationId);
+
+    const employee = await this.createUser(data.name,data.email, data.password,);
     return employee;
   }
 
-async createAdmanOrg(data:CreateAdminDto)
-{
-  const admin=await this.userRepository.save(data);
+
+async createOrgAndAdmin(data: CreateAdminDto) {
+  const organization = await this.organizationsService.createOrganization(
+    data.orgName,
+    data.orgAddress,
+  );
+  const admin = await this.createUser(
+    data.name,
+    data.email,
+    data.password,
+  );
   return admin;
+}
+async findUserByIdAndRole(data: FindUserByIdAndRoleDto) {
+  return await this.userRepository.findOne({
+    where: {
+      id: data.userId,
+      role: data.role,
+      organization: { id: data.organizationId },
+    },
+    relations: ['organization'],
+  });
 }
 
 async findAllUsers(): Promise<User[]> 
