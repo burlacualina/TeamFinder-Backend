@@ -2,7 +2,7 @@ import { PostgresConnectionOptions } from "typeorm/driver/postgres/PostgresConne
 
 const config: PostgresConnectionOptions={
     type: 'postgres',
-    host: 'http://atc-2024-postgresql-server.postgres.database.azure.com/', 
+    host: 'atc-2024-postgresql-server.postgres.database.azure.com', 
     port: 5432, 
     username: 'xforce_kgmdhq', 
     password: 'ATC2024!SecurePassword', 
